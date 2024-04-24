@@ -1,20 +1,26 @@
 import Footer from './components/Footer'
 import Header from './components/Header'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './index.css'
-
 import { Container } from 'react-bootstrap'
+
+import HomeScreen from './screens/HomeScreen'
+import ProductScreen from './screens/ProductScreen'
 
 function App() {
   return (
-    <div>
+    <BrowserRouter>
       <Header />
       <main className='py-3'>
         <Container>
-          <h1>Welcome to Barnsteensieraden</h1>
+          <Routes>
+            <Route path='/' element={<HomeScreen />} exact />
+            <Route path='/product/:id' element={<ProductScreen />} />
+          </Routes>
         </Container>
       </main>
       <Footer />
-    </div>
+    </BrowserRouter>
     
   );
 }
