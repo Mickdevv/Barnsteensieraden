@@ -1,18 +1,18 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux'
-import store from './store.js'
+import React from "react";
+import ReactDOM from "react-dom";
+import { Provider } from "react-redux";
+import store from "./store.js";
 
-import './bootstrap_sandstone.min.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import "./bootstrap_sandstone.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
 
 // const root = ReactDOM.createRoot(document.getElementById('root'));
 ReactDOM.render(
   <Provider store={store}>
     <App />
   </Provider>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function
