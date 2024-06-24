@@ -9,7 +9,6 @@ import { USER_UPDATE_PROFILE_RESET } from "../constants/userConstants";
 
 function ProfileScreen() {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const dispatch = useDispatch();
 
