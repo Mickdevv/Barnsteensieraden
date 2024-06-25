@@ -14,7 +14,7 @@ import Message from "../components/Message";
 import FormContainer from "../components/FormContainer";
 import { useDispatch, useSelector } from "react-redux";
 import { register } from "../actions/userActions";
-import { saveShippingAddress } from "../actions/cartActions";
+import { savePaymentMethod } from "../actions/cartActions";
 import CheckoutSteps from "../components/CheckoutSteps";
 
 function PaymentScreen() {
@@ -26,13 +26,13 @@ function PaymentScreen() {
 
   const [paymentMethod, setPaymentMethod] = useState("PayPal");
 
-  //   if (!shippingAddress.address) {
-  //     navigate("/shipping");
-  //   }
+  if (!shippingAddress.address) {
+    navigate("/shipping");
+  }
 
   const submitHandler = (e) => {
     e.preventDefault();
-    // dispatch(savePaymentMethod)
+    dispatch(savePaymentMethod(paymentMethod));
     navigate("/placeorder");
   };
 
