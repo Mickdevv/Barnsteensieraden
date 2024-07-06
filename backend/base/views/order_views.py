@@ -7,14 +7,12 @@ from base.models import Product
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
-from django.contrib.auth.hashers import make_password
 from rest_framework import status
 
 from base.models import Product, Order, OrderItem, ShippingAddress
 from base.serializers import ProductSerializer, OrderSerializer
+
+from datetime import datetime
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -38,6 +36,7 @@ def addOrderItems(request):
             city=data['shippingAddress']['city'],
             postcode=data['shippingAddress']['postcode'],
             country=data['shippingAddress']['country'],
+            name=data['shippingAddress']['name'],
         )
         
         for i in orderItems:
@@ -72,3 +71,14 @@ def getOrderById(request, pk):
             return HttpResponse('Unauthorized', status=401)
     except:
         return HttpResponse('Order does not exist', status=400)
+    
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def updateOrderToPaid(request, pk):
+    order = Order.objects.get(_id=pk)
+    
+    order.isPaid=True
+    order.paidAt=datetime.now()
+    order.save()
+    
+    return Response('Order paid')
