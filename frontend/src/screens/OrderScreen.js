@@ -151,7 +151,7 @@ function OrderScreen() {
                           </Link>
                         </Col>
                         <Col md={4}>
-                          {item.qty} X ${item.price} ={" "}
+                          {item.qty} X &euro;{item.price} ={" "}
                           {(item.qty * item.price).toFixed(2)}
                         </Col>
                       </Row>
@@ -171,19 +171,19 @@ function OrderScreen() {
               <ListGroup.Item>
                 <Row>
                   <Col>Items:</Col>
-                  <Col>${order.itemsPrice}</Col>
+                  <Col>&euro;{order.itemsPrice}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>Shipping:</Col>
-                  <Col>${order.shippingPrice}</Col>
+                  <Col>&euro;{order.shippingPrice}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>Total:</Col>
-                  <Col>${order.totalPrice}</Col>
+                  <Col>&euro;{order.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
               {!order.isPaid && (

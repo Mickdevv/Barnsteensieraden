@@ -3,6 +3,9 @@ import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import store from "./store.js";
 
+// import "./bootstrap_minty.css";
+// import "./bootstrap_solar.css"; //
+// import "./bootstrap_litera.css";
 import "./bootstrap_sandstone.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";

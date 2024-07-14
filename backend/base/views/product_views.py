@@ -31,3 +31,46 @@ def getProduct(request, pk):
     product = Product.objects.get(_id=pk)
     serializer = ProductSerializer(product, many=False)    
     return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAdminUser])
+def createProduct(request):
+    user = request.user
+    data = request.POST
+    product = Product.objects.create(
+        user=user,
+        name=data['name'],
+        price=data['price'],
+        brand=data['brand'],
+        countInStock=0,
+        category=data['category'],
+        description=data['description'],
+    )
+    product.save()
+    
+    serializer = ProductSerializer(product, many=False)    
+    return Response(serializer.data)
+
+@api_view(['PUT'])
+@permission_classes([IsAdminUser])
+def updateProduct(request, pk):
+    data = request.POST
+    product = Product.objects.get(_id=pk)
+    product.name=data['name']
+    product.price=data['price']
+    product.brand=data['brand']
+    product.countInStock=['countInStock']
+    product.category=data['category']
+    product.description=data['description']
+    product.save()
+    
+    serializer = ProductSerializer(product, many=False)    
+    return Response(serializer.data)
+
+@api_view(['DELETE'])
+@permission_classes([IsAdminUser])
+def deleteProduct(request, pk):
+    product = Product.objects.get(_id=pk)
+    product.delete()
+    return Response('Product deleted')
+
