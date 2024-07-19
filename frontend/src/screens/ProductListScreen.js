@@ -34,7 +34,7 @@ function ProductListScreen() {
     }
 
     if (successCreate) {
-      navigate(`admin/product/${createdProduct._id}`)
+      navigate(`/admin/product/${createdProduct._id}/edit`)
     } else {
       dispatch(listProducts());
     }
