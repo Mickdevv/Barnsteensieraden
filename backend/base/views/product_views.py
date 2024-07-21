@@ -78,3 +78,39 @@ def uploadImage(request):
     product.save()
     
     return Response('Image was uploaded')
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def createProductReview(request, pk):
+    product = Product.objects.get(_id=pk)
+    user = request.user
+    data = request.data
+    
+    if product.review_set.filter(user=user).exists():
+        content = {'detail':'Product already reviewed'}
+        return Response(content, status=status.HTTP_400_BAD_REQUEST)
+    elif data['rating'] == 0:
+        content = {'detail':'Please select a rating'}
+        return Response(content, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        review = Review.objects.create(
+            user = user,
+            rating = data['rating'],
+            product = product,
+            name = user.first_name,
+            comment=data['comment']
+        )
+        reviews = product.review_set.all()
+        product.numReviews = len(reviews) + 1
+        
+        rating = 0
+        for review in reviews:
+            rating += review.rating
+            
+        rating /= len(reviews)
+        product.rating = rating
+        
+        review.save()
+        product.save()
+        
+        return Response({'detail':'Review added'})

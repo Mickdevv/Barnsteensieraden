@@ -4,6 +4,7 @@ import Navbar from "react-bootstrap/Navbar";
 import { LinkContainer } from "react-router-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { NavDropdown } from "react-bootstrap";
+import SearchBox from './SearchBox'
 import { logout } from "../actions/userActions";
 
 function Header() {
@@ -25,6 +26,7 @@ function Header() {
           </LinkContainer>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
+            <SearchBox />
             <Nav className="ml-auto">
               <LinkContainer to="/cart">
                 <Nav.Link>
@@ -49,7 +51,7 @@ function Header() {
                 </LinkContainer>
               )}
 
-              {userInfo && userInfo.isAdmin ? (
+              {userInfo && userInfo.isAdmin && (
                 <NavDropdown title="Admin" id="adminmenu">
                   <LinkContainer to="/admin/users">
                     <NavDropdown.Item>Manage users</NavDropdown.Item>
@@ -61,12 +63,6 @@ function Header() {
                     <NavDropdown.Item>Manage orders</NavDropdown.Item>
                   </LinkContainer>
                 </NavDropdown>
-              ) : (
-                <LinkContainer to="/login">
-                  <Nav.Link>
-                    <i className="fas fa-user" /> Login
-                  </Nav.Link>
-                </LinkContainer>
               )}
             </Nav>
           </Navbar.Collapse>
