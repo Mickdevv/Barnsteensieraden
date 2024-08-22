@@ -79,13 +79,14 @@ function OrderScreen() {
       dispatch({ type: ORDER_PAY_RESET });
       dispatch({ type: ORDER_DELIVER_RESET });
       dispatch(getOrderDetails(orderId));
-    } else if (!order.isPaid) {
-      if (!window.paypal) {
-        addPayPalScript();
-      } else {
-        setSdkReady(true);
-      }
-    }
+    } 
+    // else if (!order.isPaid) {
+    //   if (!window.paypal) {
+    //     addPayPalScript();
+    //   } else {
+    //     setSdkReady(true);
+    //   }
+    // }
   }, [dispatch, order, orderId, successPay, successDeliver, userInfo, navigate]);
 
   const successPaymentHandler = (paymentResult) => {
@@ -206,6 +207,24 @@ function OrderScreen() {
               {!order.isPaid && (
                 <ListGroup.Item>
                   {loadingPay && <Loader />}
+                  <Button
+                    type="button"
+                    className="btn btn-block"
+                    onClick={() => {
+                      // Trigger iDEAL payment flow here
+                      // Use your iDEAL integration code
+                      // For example, trigger payment via API and handle the result
+                      const paymentResult = {}; // Replace with actual iDEAL payment result
+                      successPaymentHandler(paymentResult);
+                    }}>
+                    Pay with iDEAL
+                  </Button>
+                </ListGroup.Item>
+              )}
+
+{/* {!order.isPaid && (
+                <ListGroup.Item>
+                  {loadingPay && <Loader />}
                   {!sdkReady ? (
                     <Loader />
                   ) : (
@@ -215,7 +234,7 @@ function OrderScreen() {
                     />
                   )}
                 </ListGroup.Item>
-              )}
+              )} */}
 
               {error && (
                 <ListGroup.Item>
