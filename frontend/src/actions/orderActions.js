@@ -116,42 +116,36 @@ export const listOrders = () => async (dispatch, getState) => {
   }
 };
 
-export const payOrder = (id, paymentResult) => async (dispatch, getState) => {
-  try {
-    dispatch({
-      type: ORDER_PAY_REQUEST,
-    });
+// export const payOrder = (id, paymentResult) => async (dispatch, getState) => {
+//   try {
+//     dispatch({
+//       type: ORDER_PAY_REQUEST,
+//     });
 
-    const {
-      userLogin: { userInfo },
-    } = getState();
+//     const {
+//       userLogin: { userInfo },
+//     } = getState();
 
-    const config = {
-      headers: {
-        "Content-type": "application/json",
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    };
+//     const config = {
+//       headers: {
+//         "Content-type": "application/json",
+//         Authorization: `Bearer ${userInfo.token}`,
+//       },
+//     };
 
-    console.log(paymentResult)
+//     console.log(paymentResult)
 
-    const { data } = await axios.put(
-      `/api/orders/${id}/pay/`,
-      paymentResult,
-      config
-    );
-
-    dispatch({ type: ORDER_PAY_SUCCESS, payload: data });
-  } catch (error) {
-    dispatch({
-      type: ORDER_PAY_FAIL,
-      payload:
-        error.response && error.response.data.detail
-          ? error.response.data.detail
-          : error.message,
-    });
-  }
-};
+//     dispatch({ type: ORDER_PAY_SUCCESS, payload: paymentResult });
+//   } catch (error) {
+//     dispatch({
+//       type: ORDER_PAY_FAIL,
+//       payload:
+//         error.response && error.response.data.detail
+//           ? error.response.data.detail
+//           : error.message,
+//     });
+//   }
+// };
 
 export const deliverOrder = (order) => async (dispatch, getState) => {
   try {
@@ -204,10 +198,13 @@ export const createOrder = (order) => async (dispatch, getState) => {
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
+    console.log("Action", order)
 
     const { data } = await axios.post(`/api/orders/add/`, order, config);
 
-    dispatch({ type: ORDER_CREATE_SUCCESS, payload: data });
+    console.log("Action data", data)
+
+    dispatch({ type: ORDER_CREATE_SUCCESS, payload: {...data, "itemsPrice": order.itemsPrice} });
     dispatch({ type: CART_CLEAR_ITEMS, payload: data });
 
     localStorage.removeItem("cartItems");

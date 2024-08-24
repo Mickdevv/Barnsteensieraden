@@ -33,7 +33,7 @@ function PlaceOrderScreen() {
     .reduce((acc, item) => acc + item.price * item.qty, 0)
     .toFixed(2);
 
-  cart.shippingPrice = (cart.itemsPrice > 10000 ? 0 : 15).toFixed(2);
+  cart.shippingPrice = (cart.itemsPrice > 100 ? 0 : 15).toFixed(2);
 
   cart.totalPrice = (
     Number(cart.itemsPrice) + Number(cart.shippingPrice)
@@ -41,7 +41,7 @@ function PlaceOrderScreen() {
 
   useEffect(() => {
     if (success) {
-      navigate(`/order/${order._id}`);
+      navigate(`/order/${order._id}/`);
       dispatch({ type: ORDER_CREATE_RESET });
     }
   }, [success, navigate, location]);
@@ -51,6 +51,7 @@ function PlaceOrderScreen() {
   }
 
   const placeOrder = () => {
+
     dispatch(
       createOrder({
         orderItems: cart.cartItems,
@@ -80,14 +81,14 @@ function PlaceOrderScreen() {
                 {cart.shippingAddress.country}
               </p>
             </ListGroup.Item>
-            <ListGroup.Item>
+            {/* <ListGroup.Item>
               <h2>Payment method</h2>
               <p>
                 <strong>Method:</strong>
                 <br />
                 {cart.paymentMethod}
               </p>
-            </ListGroup.Item>
+            </ListGroup.Item> */}
             <ListGroup.Item>
               <h2>Order items</h2>
               {cart.cartItems.length === 0 ? (

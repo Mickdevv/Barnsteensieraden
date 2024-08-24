@@ -21,12 +21,13 @@ function Header() {
     <header>
       <Navbar expand="lg" className="bg-primary" data-bs-theme="dark">
         <Container>
+
           <LinkContainer to="/">
             <Navbar.Brand>Barnsteensieraden</Navbar.Brand>
           </LinkContainer>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            <SearchBox />
+            
             <Nav className="ml-auto">
               <LinkContainer to="/cart">
                 <Nav.Link>
@@ -64,6 +65,7 @@ function Header() {
                   </LinkContainer>
                 </NavDropdown>
               )}
+              <SearchBox />
             </Nav>
           </Navbar.Collapse>
         </Container>

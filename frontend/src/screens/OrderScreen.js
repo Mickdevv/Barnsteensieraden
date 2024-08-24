@@ -1,45 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { PayPalButton } from "react-paypal-button-v2";
 import { ORDER_PAY_RESET, ORDER_DELIVER_RESET } from "../constants/orderConstants";
-import {
-  redirect,
-  useLocation,
-  useNavigate,
-  Link,
-  useParams,
-} from "react-router-dom";
-import {
-  Button,
-  Row,
-  Col,
-  ListGroup,
-  Image,
-  Card,
-  ListGroupItem,
-} from "react-bootstrap";
+import { useNavigate, Link, useParams } from "react-router-dom";
+import { Button, Row, Col, ListGroup, Image, Card } from "react-bootstrap";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import FormContainer from "../components/FormContainer";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  createOrder,
-  deliverOrder,
-  getOrderDetails,
-  payOrder,
-} from "../actions/orderActions";
-import { ORDER_CREATE_RESET } from "../constants/orderConstants";
+import { deliverOrder, getOrderDetails, payOrder } from "../actions/orderActions";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import StripePayment from "../components/StripePayment";
+import axios from "axios";
+
+const stripePromise = loadStripe("pk_test_51PqL1Z02rHjAqjmEn8SGrYwZhU9sExQy9pnwhP5K8RghLXYlBAqpdfQgDdNobiKTGFrODVx1tTgY6VxklIbmTwTt00uyPCH4cy");
 
 function OrderScreen() {
   const orderId = useParams().id;
   const dispatch = useDispatch();
-
-  const location = useLocation();
   const navigate = useNavigate();
 
-  const [sdkReady, setSdkReady] = useState(false);
+  const [clientSecret, setClientSecret] = useState("");
 
   const orderDetails = useSelector((state) => state.orderDetails);
   const { order, error, loading } = orderDetails;
+  console.log(order)
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
@@ -50,51 +33,88 @@ function OrderScreen() {
   const orderDeliver = useSelector((state) => state.orderDeliver);
   const { loading: loadingDeliver, success: successDeliver } = orderDeliver;
 
-  if (!loading && !error) {
-    order.itemsPrice = order.orderItems
-      .reduce((acc, item) => acc + item.price * item.qty, 0)
-      .toFixed(2);
+// Fetch Order Details
+useEffect(() => {
+  if (!userInfo) {
+    navigate('/login');
+    return;
+  }
+  
+  if (!order || successPay || successDeliver || order._id !== Number(orderId)) {
+    dispatch({ type: ORDER_PAY_RESET });
+    dispatch({ type: ORDER_DELIVER_RESET });
+    dispatch(getOrderDetails(orderId));
+  }
+}, [dispatch, orderId, userInfo, order, successPay, successDeliver, navigate]);
+
+// Handle Payment Intent from URL
+useEffect(() => {
+  if (!userInfo) {
+    navigate('/login');
+    return;
   }
 
-  //   client id ATI1A7Y36Je7q8lbiRkWnJczWwwN2R5hFXvTNFwls8xqm7M_sCEuY4qh91Hh6pFNM3K0-EQ3ZCha4pTc
+  const query = new URLSearchParams(window.location.search);
+  const paymentIntentIdFromUrl = query.get('payment_intent');
+  const paymentIntentClientSecretFromUrl = query.get('payment_intent_client_secret');
 
-  const addPayPalScript = () => {
-    const script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src =
-      "https://www.paypal.com/sdk/js?client-id=ATI1A7Y36Je7q8lbiRkWnJczWwwN2R5hFXvTNFwls8xqm7M_sCEuY4qh91Hh6pFNM3K0-EQ3ZCha4pTc&currency=USD";
-    script.async = true;
-    script.onload = () => {
-      setSdkReady(true);
+  if (paymentIntentIdFromUrl && paymentIntentClientSecretFromUrl) {
+    const handlePaymentIntent = async () => {
+      try {
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${userInfo.token}`,
+          },
+        };
+
+        await axios.post('/api/orders/verify-payment/', {
+          paymentIntentId: paymentIntentIdFromUrl,
+          clientSecret: paymentIntentClientSecretFromUrl,
+          orderId: orderId,
+        }, config);
+
+        // Reload order details after payment verification
+        dispatch(getOrderDetails(orderId));
+      } catch (error) {
+        console.error("Error verifying payment:", error);
+      }
     };
-    document.body.appendChild(script);
-  };
+    handlePaymentIntent();
+  }
+}, [dispatch, orderId, userInfo, navigate]);
 
-  useEffect(() => {
-    if (!userInfo) {
-      navigate('/login')
-    }
-
-    if (!order || successPay || order._id !== Number(orderId) || successDeliver) {
-      dispatch({ type: ORDER_PAY_RESET });
-      dispatch({ type: ORDER_DELIVER_RESET });
-      dispatch(getOrderDetails(orderId));
-    } 
-    // else if (!order.isPaid) {
-    //   if (!window.paypal) {
-    //     addPayPalScript();
-    //   } else {
-    //     setSdkReady(true);
-    //   }
-    // }
-  }, [dispatch, order, orderId, successPay, successDeliver, userInfo, navigate]);
+// Fetch Client Secret
+useEffect(() => {
+  if (!userInfo) {
+    navigate('/login');
+    return;
+  }
+  
+  if (order && !order.isPaid && clientSecret === "") {
+    const getClientSecret = async () => {
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+      const { data } = await axios.post(`/api/orders/create-payment-intent/`, {
+        currency: "eur",
+        orderId: orderId,
+      }, config);
+      setClientSecret(data.clientSecret);
+    };
+    getClientSecret();
+  }
+}, [order, clientSecret, userInfo, navigate]);
 
   const successPaymentHandler = (paymentResult) => {
-    dispatch(payOrder(orderId, paymentResult));
+    console.log("Payment result : ", paymentResult)
+    // dispatch(payOrder(orderId, paymentResult));
   };
 
   const deliverHandler = () => {
-    console.log(order)
     dispatch(deliverOrder(order));
   };
 
@@ -104,20 +124,18 @@ function OrderScreen() {
     <Message variant="danger">{error}</Message>
   ) : (
     <div>
-      <h1>Order: {order._id}</h1>
+      {/* <h1>Order: {order._id}</h1> */}
       <Row>
         <Col md={8}>
           <ListGroup variant="flush">
             <ListGroup.Item>
               <h2>Shipping</h2>
               <p>
-                <p>
-                  <strong>Name: </strong>
-                  {order.shippingAddress.name}
-                  <br />
-                  <strong>Email: </strong>
-                  {order.user.email}
-                </p>
+                <strong>Name: </strong>
+                {order.shippingAddress.name}
+                <br />
+                <strong>Email: </strong>
+                {order.user.email}
                 <br />
                 {order.shippingAddress.address}, {order.shippingAddress.city}
                 <br />
@@ -126,20 +144,16 @@ function OrderScreen() {
                 {order.shippingAddress.country}
               </p>
               {order.isDelivered ? (
-                <Message variant="success">
-                  Delivered on {order.deliveredAt}
-                </Message>
+                <Message variant="success">Delivered on {order.deliveredAt}</Message>
               ) : (
                 <Message variant="warning">Not delivered</Message>
               )}
             </ListGroup.Item>
             <ListGroup.Item>
-              <h2>Payment method</h2>
-              <p>
-                <strong>Method:</strong>
-                <br />
-                {order.paymentMethod}
-              </p>
+              <h2>Payment</h2>
+              {/* <p>
+                <strong>Method:</strong> {order.paymentMethod}
+              </p> */}
               {order.isPaid ? (
                 <Message variant="success">Paid on {order.paidAt}</Message>
               ) : (
@@ -204,38 +218,19 @@ function OrderScreen() {
                   <Col>&euro;{order.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
-              {!order.isPaid && (
+              {!order.isPaid && clientSecret && (
                 <ListGroup.Item>
                   {loadingPay && <Loader />}
-                  <Button
-                    type="button"
-                    className="btn btn-block"
-                    onClick={() => {
-                      // Trigger iDEAL payment flow here
-                      // Use your iDEAL integration code
-                      // For example, trigger payment via API and handle the result
-                      const paymentResult = {}; // Replace with actual iDEAL payment result
-                      successPaymentHandler(paymentResult);
-                    }}>
-                    Pay with iDEAL
-                  </Button>
-                </ListGroup.Item>
-              )}
-
-{/* {!order.isPaid && (
-                <ListGroup.Item>
-                  {loadingPay && <Loader />}
-                  {!sdkReady ? (
-                    <Loader />
-                  ) : (
-                    <PayPalButton
-                      amount={order.totalPrice}
+                  <Elements stripe={stripePromise}>
+                    <StripePayment
+                      amount={order.totalPrice * 100}
+                      currency="eur"
+                      clientSecret={clientSecret} // Pass the clientSecret here
                       onSuccess={successPaymentHandler}
                     />
-                  )}
+                  </Elements>
                 </ListGroup.Item>
-              )} */}
-
+              )}
               {error && (
                 <ListGroup.Item>
                   <Message variant="danger">{error}</Message>
@@ -246,11 +241,13 @@ function OrderScreen() {
             {userInfo && userInfo.isAdmin && order.isPaid && !order.isDelivered && (
               <ListGroup.Item>
                 <Button
-              type="button"
-              className="btn btn-block"
-              onClick={deliverHandler}>
-                Mark as delivered</Button>
-                </ListGroup.Item>
+                  type="button"
+                  className="btn btn-block"
+                  onClick={deliverHandler}
+                >
+                  Mark as delivered
+                </Button>
+              </ListGroup.Item>
             )}
           </Card>
         </Col>

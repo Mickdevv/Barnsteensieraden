@@ -23,10 +23,46 @@ function ShippingScreen() {
   const [country, setCountry] = useState(shippingAddress.country);
   const [name, setName] = useState(shippingAddress.name);
 
+  const euSingleMarketCountries = [
+    "Netherlands",
+    "Austria",
+    "Belgium",
+    "Bulgaria",
+    "Croatia",
+    "Cyprus",
+    "Czech Republic",
+    "Denmark",
+    "Estonia",
+    "Finland",
+    "France",
+    "Germany",
+    "Greece",
+    "Hungary",
+    "Iceland",
+    "Ireland",
+    "Italy",
+    "Latvia",
+    "Liechtenstein",
+    "Lithuania",
+    "Luxembourg",
+    "Malta",
+    "Netherlands",
+    "Norway",
+    "Poland",
+    "Portugal",
+    "Romania",
+    "Slovakia",
+    "Slovenia",
+    "Spain",
+    "Sweden",
+    "Switzerland",
+  ];
+  
+
   const submitHandler = (e) => {
     e.preventDefault();
     dispatch(saveShippingAddress({ address, name, city, postcode, country }));
-    navigate("/payment");
+    navigate("/placeorder");
   };
 
   return (
@@ -69,14 +105,21 @@ function ShippingScreen() {
             value={postcode ? postcode : ""}
             onChange={(e) => setPostcode(e.target.value)}></Form.Control>
         </Form.Group>
+        
         <Form.Group controlId="country">
           <Form.Label className="mt-3">Country</Form.Label>
           <Form.Control
-            required
-            type="text"
+            as="select"
             placeholder="Enter country"
             value={country ? country : ""}
-            onChange={(e) => setCountry(e.target.value)}></Form.Control>
+            onChange={(e) => setCountry(e.target.value)}>
+
+            {euSingleMarketCountries.map((countryName, index) => (
+              <option key={index} value={countryName}>
+                {countryName}
+              </option>
+            ))}
+          </Form.Control>
         </Form.Group>
         <Button type="submit" variant="primary" className="my-3">
           Continue
