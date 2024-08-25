@@ -13,6 +13,12 @@ import axios from "axios";
 
 const stripePromise = loadStripe("pk_test_51PqL1Z02rHjAqjmEn8SGrYwZhU9sExQy9pnwhP5K8RghLXYlBAqpdfQgDdNobiKTGFrODVx1tTgY6VxklIbmTwTt00uyPCH4cy");
 
+function extractDateTime(dateTime) {
+  const date = dateTime.substring(0,10).split("-").reverse().join('/')
+  const time = dateTime.substring(11,19)
+  return date + ' '  + time
+} 
+
 function OrderScreen() {
   const orderId = useParams().id;
   const dispatch = useDispatch();
@@ -144,7 +150,7 @@ useEffect(() => {
                 {order.shippingAddress.country}
               </p>
               {order.isDelivered ? (
-                <Message variant="success">Delivered on {order.deliveredAt}</Message>
+                <Message variant="success">Delivered on {extractDateTime(order.deliveredAt)}</Message>
               ) : (
                 <Message variant="warning">Not delivered</Message>
               )}
@@ -155,7 +161,7 @@ useEffect(() => {
                 <strong>Method:</strong> {order.paymentMethod}
               </p> */}
               {order.isPaid ? (
-                <Message variant="success">Paid on {order.paidAt}</Message>
+                <Message variant="success">Paid on {extractDateTime(order.paidAt)}</Message>
               ) : (
                 <Message variant="warning">Not paid</Message>
               )}

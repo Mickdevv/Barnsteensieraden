@@ -56,7 +56,7 @@ class Order(models.Model):
         # Calculate the total price with tax and shipping
         tax = self.taxPrice or 0
         shipping = self.shippingPrice or 0
-        self.totalPrice = items_total + self.taxPrice + self.shippingPrice
+        self.totalPrice = items_total + float(shipping) + float(tax)
 
         # Save the updated totalPrice to the database
         self.save()
