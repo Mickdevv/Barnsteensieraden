@@ -4,20 +4,19 @@ import { Form, Button, Row, Col, Table } from "react-bootstrap";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserDetails, updateUserProfile } from "../actions/userActions";
-import { USER_UPDATE_PROFILE_RESET } from "../constants/userConstants";
+import { getUserDetails, updateUserProfile, verifyUser } from "../actions/userActions";
+import { USER_DETAILS_RESET, USER_UPDATE_PROFILE_RESET, USER_VERIFICATION_REQUEST } from "../constants/userConstants";
 import { listMyOrders } from "../actions/orderActions";
 import { LinkContainer } from "react-router-bootstrap";
 
 function ProfileScreen() {
   const params = useParams()
-  const confirmation_code = params.code
-  
-  if (confirmation_code) {
-    console.log(confirmation_code)
-  }  
+  const verification_code = params.code
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const [verificationAttempted, setVerificationAttempted] = useState(false);
 
   const userDetails = useSelector((state) => state.userDetails);
   const { error, loading, user } = userDetails;
@@ -40,17 +39,24 @@ function ProfileScreen() {
     } else {
       if (!user || userInfo._id !== user._id || success) {
         dispatch({ type: USER_UPDATE_PROFILE_RESET });
+        dispatch({ type: USER_DETAILS_RESET });
         dispatch(getUserDetails("profile"));
         dispatch(listMyOrders());
       } else {
-        setName(user.name || "");
-        setEmail(user.email || "");
+        setEmail(user.email);
+        setName(user.name);
+        if (verification_code && !userInfo.emailVerified && !verificationAttempted) {
+          dispatch(verifyUser(verification_code));
+          dispatch(getUserDetails("profile"));
+          setVerificationAttempted(true);  // Ensure verification only runs once
+        }
       }
     }
-  }, [userInfo, navigate, user, dispatch, success]);
+  }, [userInfo, navigate, user, dispatch, success, verification_code, verificationAttempted]);
 
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
+
+  const [email, setEmail] = useState(user?.email || "");
+  const [name, setName] = useState(user?.name || "");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -74,6 +80,13 @@ function ProfileScreen() {
 
   return (
     <Row>
+      {verification_code && 
+      <>
+        {verify_loading && <Loader />}
+        {verify_success && <Message variant='success'>Email successfully verified</Message>}
+        {verify_error && <Message variant='danger'>{error.message}</Message>}
+      </>
+      }
       <Col md={3}>
         <h2>User Profile</h2>
         {message && <Message variant="danger">{message}</Message>}
@@ -85,7 +98,7 @@ function ProfileScreen() {
             <Form.Label>Name</Form.Label>
             <Form.Control
               required
-              type="name"
+              type="text"
               placeholder="Jane Doe"
               value={name}
               onChange={(e) => setName(e.target.value)}></Form.Control>

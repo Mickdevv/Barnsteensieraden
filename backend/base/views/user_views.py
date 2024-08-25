@@ -1,6 +1,5 @@
 import datetime
 from typing import Any
-from django.shortcuts import render
 from django.http import JsonResponse
 
 from base.send_email import admin_registration_notification, email_verification_email
@@ -22,6 +21,7 @@ def purge_expired_confirmation_codes():
             try:
                 code.delete()
             except:
+                print('Error purging expired codes')
                 pass
 
 @api_view(['GET'])
@@ -132,30 +132,42 @@ def updateUser(request, pk):
     else:
         return Response(status=401)
     
-api_view(["GET"])
+@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def verify_email(request, URL_code):
     if request.method == 'GET':
-        purge_expired_confirmation_codes()
+        if not request.user.is_authenticated:
+            return Response({"message": "User is not authenticated"}, status=401)
+
         try:
+            print(request.user.email, request.user.id, request.user.confirmation_code.code)
+            print(URL_code)
+            purge_expired_confirmation_codes()
+            user = User.objects.get(id=request.user.id)
+            
             account_conditions = [
-                request.user.confirmation_code.code,
-                str(request.user.confirmation_code.code) == str(URL_code),
-                datetime.datetime.now().timestamp() <=  request.user.confirmation_code.expiresAt.timestamp()
+                user.confirmation_code.code,
+                URL_code,
+                str(user.confirmation_code.code) == str(URL_code),
+                datetime.datetime.now().timestamp() <= user.confirmation_code.expiresAt.timestamp()
             ]
-            if  all(account_conditions) :
-                user = request.user
+            print(account_conditions)
+            
+            if all(account_conditions):
                 user.emailVerified = True
                 user.save()
-                
+                print(user.emailVerified)
                 admin_registration_notification(user)
-        except:
-            pass
-        
-        if request.user.emailVerified:
-            return Response("User verified successfully")
-        else:
-            return Response("User verification failed")
+                return Response({"message": "Email verified successfully"}, status=200)
+
+            return Response({"message": "Invalid or expired code. Please try again"}, status=400)
+
+        except Exception as e:
+            print(f"Error during verification: {e}")
+            return Response({"message": "Internal server error"}, status=500)
+
+    return Response(status=400)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -163,8 +175,10 @@ def verify_email_send(request):
     if request.method == 'POST':
         try:
             user = request.user
+            print(user.confirmation_code.code)
             user.generate_confirmation_code()
             user.save()
+            print(user.confirmation_code.code)
             email_verification_email(user)
             return Response({"message":"Email sent successfully"}, status=200)
         except: 

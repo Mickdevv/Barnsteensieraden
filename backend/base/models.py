@@ -34,7 +34,7 @@ class User(AbstractUser):
     magic_link = models.OneToOneField(MagicLink, on_delete=models.DO_NOTHING, null=True, blank=True)
     
     def generate_confirmation_code(self):
-        self.confirmation_code = ConfirmationCode.objects.create(expiresAt=(timezone.now() + datetime.timedelta(minutes=15)))
+        self.confirmation_code = ConfirmationCode.objects.create(code=getrandbits(128), expiresAt=(timezone.now() + datetime.timedelta(minutes=15)))
         self.save()
     
 class Product(models.Model):

@@ -1,15 +1,17 @@
 <!-- templates/welcome_email.html -->
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Welcome</title>
-        <style>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+    <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f8f8f8;
             color: #333333;
         }
+
         .content {
             background-color: #ffffff;
             padding: 20px;
@@ -17,6 +19,7 @@
             width: 600px;
             border: 1px solid #dddddd;
         }
+
         .button {
             display: inline-block;
             padding: 10px 20px;
@@ -25,19 +28,21 @@
             text-decoration: none;
             margin-top: 10px;
         }
-        </style>
-    </head>
-    <body>
-        <div class="content">
-            <h1>User details :</h1>
-            <ul>
-                <li>Display name: {{ user.display_name }}</li>
-                <li>Name: {{ user.first_name }} {{ user.last_name }}</li>
-                <li>Email: {{ user.email }}</li>
-                <li>Company: {{ user.company }}</li>
-            </ul>
-            <a href="{{ user_details_link }}" class="button">Full user details</a>
-        </div>
-        {% comment %} <div style="text-align: center; font-size: 12px; color: #999999;">© 2024 New packer tech. All rights reserved.</div> {% endcomment %}
-    </body>
+    </style>
+</head>
+
+<body>
+    <div class="content">
+        <h1>User details :</h1>
+        <ul>
+            <li>Display name: {{ user.display_name }}</li>
+            <li>Name: {{ user.first_name }} {{ user.last_name }}</li>
+            <li>Email: {{ user.email }}</li>
+        </ul>
+        <a href="{{ user_details_link }}" class="button">Full user details</a>
+    </div>
+    {% comment %} <div style="text-align: center; font-size: 12px; color: #999999;">© 2024 New packer tech. All rights
+        reserved.</div> {% endcomment %}
+</body>
+
 </html>

@@ -28,6 +28,9 @@ import {
   USER_VERIFICATION_EMAIL_REQUEST,
   USER_VERIFICATION_EMAIL_SUCCESS,
   USER_VERIFICATION_EMAIL_FAIL,
+  USER_VERIFICATION_REQUEST,
+  USER_VERIFICATION_SUCCESS,
+  USER_VERIFICATION_FAIL,
 } from "../constants/userConstants";
 import { ORDER_LIST_MY_RESET } from "../constants/orderConstants";
 
@@ -304,6 +307,39 @@ export const sendVerificationEmail = () => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: USER_VERIFICATION_EMAIL_FAIL,
+      payload: error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message,
+    });
+  }
+}
+
+export const verifyUser = (verification_code) => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: USER_VERIFICATION_REQUEST,
+    });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+  
+    const config = {
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+    console.log(config)
+  
+    await axios.get(`/api/users/verify-email/${verification_code}/`, config);
+
+    dispatch({ type: USER_VERIFICATION_SUCCESS });
+    dispatch(getUserDetails())
+
+  } catch (error) {
+    dispatch({
+      type: USER_VERIFICATION_FAIL,
       payload: error.response && error.response.data.message
         ? error.response.data.message
         : error.message,

@@ -172,10 +172,7 @@ export const userVerifyReducer = (state = {}, action) => {
       return { loading: false, success: true };
 
     case USER_VERIFICATION_FAIL:
-      return { loading: false, error: action.payload };
-
-    case USER_UPDATE_RESET:
-      return { user: {}};
+      return { loading: false, success: false, error: action.payload };
 
     default:
       return state;

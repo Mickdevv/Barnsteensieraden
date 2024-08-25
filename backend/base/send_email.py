@@ -42,7 +42,7 @@ def admin_registration_notification(user):
     link = f"{settings.BASE_URL}auth/manage-users/{user.id}/"
     mailList = ["michael@devereux.fm", settings.EMAIL_HOST_USER]
         
-    subject = f'Notification: {user.first_name} {user.last_name} from {user.company} has just signed up'
+    subject = f'Notification: {user.first_name} {user.last_name} has just signed up'
     from_email = settings.EMAIL_HOST_USER
     
     # Dynamic data
