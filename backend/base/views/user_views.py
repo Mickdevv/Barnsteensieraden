@@ -1,9 +1,11 @@
+import datetime
 from typing import Any
 from django.shortcuts import render
 from django.http import JsonResponse
 
+from base.send_email import admin_registration_notification, email_verification_email
 from base.serializers import *
-from base.models import Product
+from base.models import ConfirmationCode, Product, User
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -13,19 +15,27 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth.hashers import make_password
 from rest_framework import status
 
+def purge_expired_confirmation_codes():
+    confirmation_codes = ConfirmationCode.objects.all()
+    for code in confirmation_codes:
+        if datetime.datetime.now().timestamp() >  code.expiresAt.timestamp():
+            try:
+                code.delete()
+            except:
+                pass
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getUserProfile(request):
     user = request.user
-    serializer = UserSerializer(user, many=False)    
+    serializer = UserSerializer(user, many=False) 
+    # print(serializer.data)   
     return Response(serializer.data)
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def updateUserProfile(request):
     user = request.user
-    serializer = UserSerializerWithToken(user, many=False)    
-    
     data = request.data
     
     user.first_name = data['name']
@@ -36,6 +46,8 @@ def updateUserProfile(request):
         user.password = make_password(data['password'])
         
     user.save()
+    serializer = UserSerializerWithToken(user, many=False)    
+    print(serializer.data)
     
     return Response(serializer.data)
 
@@ -103,14 +115,58 @@ def getUserById(request, pk):
 def updateUser(request, pk):
     user = User.objects.get(id=pk)
     
-    data = request.data
-    
-    user.first_name = data['name']
-    user.username = data['email']
-    user.email = data['email']
-    user.is_staff = data['isAdmin']
+    if user.is_staff or user == request.user:
+        data = request.data
         
-    user.save()
+        user.first_name = data['name']
+        user.username = data['email']
+        user.email = data['email']
+        user.is_staff = data['isAdmin']
+        user.is_active = data['isActive']
+        user.emailVerified = data['isEmailVerified']
+            
+        user.save()
+        
+        serializer = UserSerializer(user, many=False)  
+        return Response(serializer.data)
+    else:
+        return Response(status=401)
     
-    serializer = UserSerializer(user, many=False)    
-    return Response(serializer.data)
+api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def verify_email(request, URL_code):
+    if request.method == 'GET':
+        purge_expired_confirmation_codes()
+        try:
+            account_conditions = [
+                request.user.confirmation_code.code,
+                str(request.user.confirmation_code.code) == str(URL_code),
+                datetime.datetime.now().timestamp() <=  request.user.confirmation_code.expiresAt.timestamp()
+            ]
+            if  all(account_conditions) :
+                user = request.user
+                user.emailVerified = True
+                user.save()
+                
+                admin_registration_notification(user)
+        except:
+            pass
+        
+        if request.user.emailVerified:
+            return Response("User verified successfully")
+        else:
+            return Response("User verification failed")
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def verify_email_send(request):
+    if request.method == 'POST':
+        try:
+            user = request.user
+            user.generate_confirmation_code()
+            user.save()
+            email_verification_email(user)
+            return Response({"message":"Email sent successfully"}, status=200)
+        except: 
+            return Response({"message":"Something went wrong"}, status=500)
+            

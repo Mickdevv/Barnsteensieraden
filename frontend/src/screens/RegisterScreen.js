@@ -6,6 +6,7 @@ import Message from "../components/Message";
 import FormContainer from "../components/FormContainer";
 import { useDispatch, useSelector } from "react-redux";
 import { register } from "../actions/userActions";
+import axios from "axios";
 
 function RegisterScreen() {
   const navigate = useNavigate();
@@ -20,7 +21,8 @@ function RegisterScreen() {
 
   useEffect(() => {
     if (userInfo) {
-      navigate(redirect);
+      navigate("/verification-email-sent");
+      // navigate(redirect);
     }
   }, [userInfo, navigate, redirect]);
 

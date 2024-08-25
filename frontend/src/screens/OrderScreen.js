@@ -5,7 +5,7 @@ import { Button, Row, Col, ListGroup, Image, Card } from "react-bootstrap";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { useDispatch, useSelector } from "react-redux";
-import { deliverOrder, getOrderDetails, payOrder } from "../actions/orderActions";
+import { deliverOrder, getOrderDetails } from "../actions/orderActions";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import StripePayment from "../components/StripePayment";
@@ -209,7 +209,7 @@ useEffect(() => {
               <ListGroup.Item>
                 <Row>
                   <Col>Items:</Col>
-                  <Col>&euro;{order.itemsPrice}</Col>
+                  <Col>&euro;{order.totalPrice - order.shippingPrice}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
@@ -224,7 +224,8 @@ useEffect(() => {
                   <Col>&euro;{order.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
-              {!order.isPaid && clientSecret && (
+              {!userInfo.emailVerified && <Message variant='info'>Please verify your email address to place an order</Message>}
+              {!order.isPaid && clientSecret && userInfo.emailVerified && (
                 <ListGroup.Item>
                   {loadingPay && <Loader />}
                   <Elements stripe={stripePromise}>

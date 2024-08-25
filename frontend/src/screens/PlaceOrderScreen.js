@@ -29,6 +29,9 @@ function PlaceOrderScreen() {
   const orderCreate = useSelector((state) => state.orderCreate);
   const { order, error, success } = orderCreate;
 
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
   cart.itemsPrice = cart.cartItems
     .reduce((acc, item) => acc + item.price * item.qty, 0)
     .toFixed(2);
@@ -65,7 +68,7 @@ function PlaceOrderScreen() {
   };
   return (
     <div>
-      <CheckoutSteps step1 step2 step3 step4 />
+      <CheckoutSteps step1 step2 step3 />
       <Row>
         <Col md={8}>
           <ListGroup variant="flush">
@@ -150,6 +153,8 @@ function PlaceOrderScreen() {
               <ListGroup.Item>
                 {error && <Message variant="danger">{error}</Message>}
               </ListGroup.Item>
+              {userInfo ? !userInfo.emailVerified ? <Message variant='info'>You must verify your email before placing an order</Message> :
+              
               <ListGroup.Item>
                 <Row>
                   <Button
@@ -161,6 +166,8 @@ function PlaceOrderScreen() {
                   </Button>
                 </Row>
               </ListGroup.Item>
+              : <Message variant='info'>You must be logged in to place an order an order</Message>}
+              
             </ListGroup>
           </Card>
         </Col>

@@ -19,6 +19,7 @@ import UserEditScreen from "./screens/UserEditScreen";
 import ProductEditScreen from "./screens/ProductEditScreen";
 import ProductListScreen from "./screens/ProductListScreen";
 import OrderListScreen from "./screens/OrderListScreen";
+import VerificationEmailSent from "./screens/VerificationEmailSent";
 
 function App() {
   return (
@@ -30,7 +31,10 @@ function App() {
             <Route path="/" element={<HomeScreen />} exact />
             <Route path="/login" element={<LoginScreen />} exact />
             <Route path="/register" element={<RegisterScreen />} exact />
+            <Route path="/verification-email-sent" element={<VerificationEmailSent />} exact />
+            <Route path="/register" element={<RegisterScreen />} exact />
             <Route path="/profile" element={<ProfileScreen />} exact />
+            <Route path="/profile/:code" element={<ProfileScreen />} />
             <Route path="/admin/orders" element={<OrderListScreen />} exact />
             <Route path="/admin/users" element={<UserListScreen />} exact />
             <Route path="/admin/user/:id/edit" element={<UserEditScreen />} exact />

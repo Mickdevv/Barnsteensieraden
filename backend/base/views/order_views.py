@@ -5,7 +5,6 @@ from django.http import JsonResponse, HttpResponse
 
 import stripe
 from base.serializers import *
-from base.models import Product, Order
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -17,7 +16,7 @@ from datetime import datetime
 from django.views import View
 from django.utils import timezone
 
-from base.models import Product, Order, OrderItem, ShippingAddress
+from base.models import Product, Order, OrderItem, ShippingAddress, User
 from base.serializers import ProductSerializer, OrderSerializer
 
 
@@ -44,6 +43,12 @@ def verify_payment(request):
                 order.paidAt = timezone.now() 
                 order.isPaid = True
                 order.save()
+              
+                for item in order.orderitem_set.all():
+                    product = item.product
+                    product.countInStock -= item.qty
+                    product.save()
+                    
             return JsonResponse({'paymentResult': payment_intent}, status=200)
         else:
             return JsonResponse({'error': 'Error handling payment. Please try again or contact our team'}, status=400)
@@ -79,49 +84,52 @@ def create_payment_intent(request):
 @permission_classes([IsAuthenticated])
 def addOrderItems(request):
     user = request.user
-    data = request.data
-    orderItems = data['orderItems']
-    
-    if orderItems and len(orderItems) == 0:
-        return Response({'detail':'No order items'}, status=status.HTTP_400_BAD_REQUEST)
-    else:
-        order = Order.objects.create(
-            user = user,
-            paymentMethod = data['paymentMethod'],
-            shippingPrice = data['shippingPrice'],
-            # itemsPrice = data['itemsPrice'],
-            totalPrice = data['totalPrice'],
-        )
-        shippingAddress = ShippingAddress.objects.create(
-            order = order,
-            address=data['shippingAddress']['address'],
-            city=data['shippingAddress']['city'],
-            postcode=data['shippingAddress']['postcode'],
-            country=data['shippingAddress']['country'],
-            name=data['shippingAddress']['name'],
-        )
+    if user.emailVerified:
+        data = request.data
+        orderItems = data['orderItems']
         
-        for i in orderItems:
-            product = Product.objects.get(_id=i['product'])
-            
-            item = OrderItem.objects.create(
-                product=product,
-                order=order,
-                name=product.name,
-                qty = i['qty'],
-                price = i['price'],
-                image=product.image.url,
+        if orderItems and len(orderItems) == 0:
+            return Response({'detail':'No order items'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            order = Order.objects.create(
+                user = user,
+                paymentMethod = data['paymentMethod'],
+                shippingPrice = data['shippingPrice'],
+                # itemsPrice = data['itemsPrice'],
+                totalPrice = data['totalPrice'],
+            )
+            shippingAddress = ShippingAddress.objects.create(
+                order = order,
+                address=data['shippingAddress']['address'],
+                city=data['shippingAddress']['city'],
+                postcode=data['shippingAddress']['postcode'],
+                country=data['shippingAddress']['country'],
+                name=data['shippingAddress']['name'],
             )
             
-            product.countInStock -= item.qty
-            product.save()
+            for i in orderItems:
+                product = Product.objects.get(_id=i['product'])
+                
+                item = OrderItem.objects.create(
+                    product=product,
+                    order=order,
+                    name=product.name,
+                    qty = i['qty'],
+                    price = i['price'],
+                    image=product.image.url,
+                )
+                
+            #     product.countInStock -= item.qty
+                # product.save()
+                
+            order.update_total_price()
             
-        order.update_total_price()
-        
 
-        serializer = OrderSerializer(order, many=False)
-        
-    return Response(serializer.data)
+            serializer = OrderSerializer(order, many=False)
+            
+        return Response(serializer.data)
+    else:
+        return Response({"error":"You must verify your email address before placing an order"})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

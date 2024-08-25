@@ -16,6 +16,8 @@ function UserEditScreen({ match, history }) {
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [isAdmin, setIsAdmin] = useState(false)
+    const [isActive, setIsActive] = useState(false)
+    const [isEmailVerified, setIsEmailVerified] = useState(false)
 
     const dispatch = useDispatch()
 
@@ -40,6 +42,8 @@ function UserEditScreen({ match, history }) {
                 setName(user.name)
                 setEmail(user.email)
                 setIsAdmin(user.isAdmin)
+                setIsActive(user.is_active)
+                setIsEmailVerified(user.emailVerified)
             }
         }
 
@@ -47,7 +51,7 @@ function UserEditScreen({ match, history }) {
 
     const submitHandler = (e) => {
         e.preventDefault()
-        dispatch(updateUser({ _id: user._id, name, email, isAdmin }))
+        dispatch(updateUser({ _id: user._id, name, email, isAdmin, isActive, isEmailVerified }))
     }
 
     return (
@@ -94,6 +98,26 @@ function UserEditScreen({ match, history }) {
                                     label='Is Admin'
                                     checked={isAdmin}
                                     onChange={(e) => setIsAdmin(e.target.checked)}
+                                >
+                                </Form.Check>
+                            </Form.Group>
+
+                            <Form.Group controlId='isactive'>
+                                <Form.Check
+                                    type='checkbox'
+                                    label='Is Active'
+                                    checked={isActive}
+                                    onChange={(e) => setIsActive(e.target.checked)}
+                                >
+                                </Form.Check>
+                            </Form.Group>
+
+                            <Form.Group controlId='isemailverified'>
+                                <Form.Check
+                                    type='checkbox'
+                                    label='Is Email Verified'
+                                    checked={isEmailVerified}
+                                    onChange={(e) => setIsEmailVerified(e.target.checked)}
                                 >
                                 </Form.Check>
                             </Form.Group>

@@ -25,6 +25,9 @@ import {
   USER_UPDATE_SUCCESS,
   USER_UPDATE_FAIL,
   USER_UPDATE_RESET,
+  USER_VERIFICATION_EMAIL_REQUEST,
+  USER_VERIFICATION_EMAIL_SUCCESS,
+  USER_VERIFICATION_EMAIL_FAIL,
 } from "../constants/userConstants";
 import { ORDER_LIST_MY_RESET } from "../constants/orderConstants";
 
@@ -276,3 +279,34 @@ export const updateUser = (user) => async (dispatch, getState) => {
     });
   }
 };
+
+export const sendVerificationEmail = () => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: USER_VERIFICATION_EMAIL_REQUEST,
+    });
+    
+    const {
+      userLogin: { userInfo },
+    } = getState();
+  
+    const config = {
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+  
+    await axios.post(`/api/users/verify-email/send/`, {}, config);
+
+    dispatch({ type: USER_VERIFICATION_EMAIL_SUCCESS });
+    
+  } catch (error) {
+    dispatch({
+      type: USER_VERIFICATION_EMAIL_FAIL,
+      payload: error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message,
+    });
+  }
+}

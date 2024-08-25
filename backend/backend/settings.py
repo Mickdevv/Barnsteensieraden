@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,10 +26,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-*u(fc0=y$il%(r=x=cgo$nx0hhi+m!tuc9o^2)*#d&9lf2xfb+'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG') == "True"
 
 ALLOWED_HOSTS = []
 
@@ -186,3 +191,17 @@ MEDIA_URL = '/images/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STRIPE_SECRET_KEY = 'sk_test_51PqL1Z02rHjAqjmEzTBPDJFtpwBBFQtWYOww9WXsMlL2YVmUYMOZofCyjik3TI5vVlDHbqI6EaYdHZygIaCoXadv00UWqrqTwX'
+
+# email settings
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = True
+
+AUTH_USER_MODEL = 'base.User'
+if DEBUG:
+    BASE_URL = 'http://localhost:3000/'
+else: 
+    BASE_URL = os.getenv('BASE_URL')
+    

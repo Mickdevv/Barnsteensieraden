@@ -1,0 +1,45 @@
+<!-- templates/welcome_email.html -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Welcome</title>
+        <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            color: #333333;
+        }
+        .content {
+            background-color: #ffffff;
+            padding: 20px;
+            margin: 20px auto;
+            width: 600px;
+            border: 1px solid #dddddd;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            color: #ffffff;
+            background-color: #0066cc;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="content">
+            <h1>Thank you for placing a bid.</h1>
+            <p>Your bid:</p>
+            <ul>
+                <li>Amount: ${{ bid.amount }}</li>
+                <li>Placed at: {{ bid.placedAt }}</li>
+            </ul>
+            <p>Bids are not considered placed until approved by clicking on the link in this email.</p>
+            <p>If you placed this bid by mistake, you can safely ignore this email.</p>
+            <p>If this bid was indeed intended, then please click on the button below to approve it.</p>
+            <a href="{{ link }}" class="button">Approve bid</a>
+        </div>
+        {% comment %} <div style="text-align: center; font-size: 12px; color: #999999;">© 2024 Your Company. All rights reserved.</div> {% endcomment %}
+    </body>
+</html>

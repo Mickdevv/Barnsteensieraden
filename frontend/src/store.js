@@ -18,6 +18,8 @@ import {
   userListReducer,
   userDeleteReducer,
   userUpdateReducer,
+  userSendEmailVerificationReducer,
+  userVerifyReducer
 } from "./reducers/userReducers";
 import {
   orderCreateReducer,
@@ -27,6 +29,7 @@ import {
   orderListReducer,
   orderDeliverReducer,
 } from "./reducers/orderReducers";
+import { sendVerificationEmail } from "./actions/userActions";
 
 const reducer = combineReducers({
   productList: productListReducer,
@@ -49,6 +52,8 @@ const reducer = combineReducers({
   userList: userListReducer,
   userDelete: userDeleteReducer,
   userUpdate: userUpdateReducer,
+  userSendEmailVerification: userSendEmailVerificationReducer,
+  userVerify: userVerifyReducer,
 });
 
 const cartItemsFromStorage = localStorage.getItem("cartItems")

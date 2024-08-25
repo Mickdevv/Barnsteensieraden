@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, redirect, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Form, Button, Row, Col, Table } from "react-bootstrap";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
@@ -10,12 +10,8 @@ import { listMyOrders } from "../actions/orderActions";
 import { LinkContainer } from "react-router-bootstrap";
 
 function ProfileScreen() {
-  const params = useParams()
-  const confirmation_code = params.code
-  
-  if (confirmation_code) {
-    console.log(confirmation_code)
-  }  
+  const params = useParams();
+  const confirmation_code = params.code;
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -24,9 +20,6 @@ function ProfileScreen() {
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
-
-  const userVerify = useSelector((state) => state.userVerify);
-  const { verify_success, verify_error, verify_loading } = userVerify;
 
   const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
   const { success } = userUpdateProfile;
@@ -85,43 +78,47 @@ function ProfileScreen() {
             <Form.Label>Name</Form.Label>
             <Form.Control
               required
-              type="name"
+              type="text"
               placeholder="Jane Doe"
               value={name}
-              onChange={(e) => setName(e.target.value)}></Form.Control>
+              onChange={(e) => setName(e.target.value)}
+            />
           </Form.Group>
-            <Form.Label>Email address (verified: {userInfo?.emailVerified ? (
-                    <i className="fas fa-check" style={{ color: "green" }}></i>
-                  ) : (
-                    <i className="fas fa-times" style={{ color: "red" }}></i>
-                  )})</Form.Label>
-            
-          {!userInfo?.emailVerified ? 
-          <Form.Group controlId="email">
-            <Form.Control
-              required
-              type="email"
-              placeholder="example@domain.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}></Form.Control></Form.Group> : 
-          <p>{userInfo?.email}</p>
-          }
+          <Form.Label>Email address (verified: {userInfo && userInfo.emailVerified ? (
+            <i className="fas fa-check" style={{ color: "green" }}></i>
+          ) : (
+            <i className="fas fa-times" style={{ color: "red" }}></i>
+          )})</Form.Label>
+          
+          {!userInfo?.emailVerified ? (
+            <Form.Group controlId="email">
+              <Form.Control
+                required
+                type="email"
+                placeholder="example@domain.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </Form.Group>
+          ) : (
+            <p>{userInfo?.email}</p>
+          )}
           <Form.Group controlId="password">
             <Form.Label>Password</Form.Label>
             <Form.Control
               type="password"
               placeholder="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}></Form.Control>
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </Form.Group>
           <Form.Group controlId="confirmPassword">
             <Form.Control
               type="password"
               placeholder="confirm password"
               value={confirmPassword}
-              onChange={(e) =>
-                setConfirmPassword(e.target.value)
-              }></Form.Control>
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
           </Form.Group>
           <Button type="submit" variant="primary" className="my-3">
             Update
@@ -129,7 +126,7 @@ function ProfileScreen() {
         </Form>
       </Col>
       <Col md={9}>
-        <h2>My orders</h2>
+        <h2>My Orders</h2>
         {loadingOrders ? (
           <Loader />
         ) : errorOrders ? (
