@@ -28,7 +28,8 @@ def purge_expired_confirmation_codes():
 @permission_classes([IsAuthenticated])
 def getUserProfile(request):
     user = request.user
-    serializer = UserSerializer(user, many=False) 
+    serializer = UserSerializerWithToken(user, many=False) 
+    print(serializer.data)
     # print(serializer.data)   
     return Response(serializer.data)
 
@@ -66,6 +67,37 @@ def registerUser(request):
         serializer = UserSerializerWithToken(user, many=False)
         
         return Response(serializer.data)
+    except:
+        message={'detail':'User with this email already exists'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+def magicLink(request, id, URL_code):  
+    data = request.data
+    try:
+        user = User.objects.get(id=id)
+        account_conditions = [
+                user.magic_link.code,
+                URL_code,
+                str(user.magic_link.code) == str(URL_code),
+                datetime.datetime.now().timestamp() <= user.magic_link.expiresAt.timestamp()
+            ]
+        
+        if all(account_conditions):
+            admin_registration_notification(user)
+            serializer = UserSerializerWithToken(user, many=False)
+            return Response(serializer.data)
+    except:
+        message={'detail':'User with this email already exists'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+def sendMagicLink(request):  
+    data = request.data
+    try:
+        user = User.objects.get(email=data["email"])
+        
+        
     except:
         message={'detail':'User with this email already exists'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)

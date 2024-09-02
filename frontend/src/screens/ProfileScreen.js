@@ -37,22 +37,20 @@ function ProfileScreen() {
     if (!userInfo) {
       navigate("/login");
     } else {
-      if (!user || userInfo._id !== user._id || success) {
-        dispatch({ type: USER_UPDATE_PROFILE_RESET });
+      if (verification_code && !userInfo.emailVerified && !verificationAttempted) {
+        dispatch(verifyUser(verification_code));
+        setVerificationAttempted(true);  // Ensure verification only runs once
+      }else if (!user || userInfo._id !== user._id || success) {
         dispatch({ type: USER_DETAILS_RESET });
+        dispatch({ type: USER_UPDATE_PROFILE_RESET });
         dispatch(getUserDetails("profile"));
         dispatch(listMyOrders());
       } else {
         setEmail(user.email);
         setName(user.name);
-        if (verification_code && !userInfo.emailVerified && !verificationAttempted) {
-          dispatch(verifyUser(verification_code));
-          dispatch(getUserDetails("profile"));
-          setVerificationAttempted(true);  // Ensure verification only runs once
-        }
       }
     }
-  }, [userInfo, navigate, user, dispatch, success, verification_code, verificationAttempted]);
+  }, [userInfo, navigate, dispatch, success, verification_code, verificationAttempted, user]);
 
 
   const [email, setEmail] = useState(user?.email || "");
@@ -66,6 +64,8 @@ function ProfileScreen() {
     if (password !== confirmPassword) {
       setMessage("Passwords do not match");
     } else {
+
+
       dispatch(
         updateUserProfile({
           id: user._id,
@@ -110,14 +110,17 @@ function ProfileScreen() {
                   )})</Form.Label>
             
           {!userInfo?.emailVerified ? 
+          <>
           <Form.Group controlId="email">
             <Form.Control
               required
               type="email"
               placeholder="example@domain.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}></Form.Control></Form.Group> : 
+              onChange={(e) => setEmail(e.target.value)}></Form.Control></Form.Group> 
+              <p>Verify your email adress <a href="/verification-email-sent">here</a></p></>: 
           <p>{userInfo?.email}</p>
+          
           }
           <Form.Group controlId="password">
             <Form.Label>Password</Form.Label>

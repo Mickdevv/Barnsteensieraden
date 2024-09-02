@@ -133,10 +133,25 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
     };
 
     const { data } = await axios.get(`/api/users/${id}/`, config);
-
+    
+    console.warn('data : ', data)
+    
     dispatch({ type: USER_DETAILS_SUCCESS, payload: data });
+     // Get the existing userInfo from localStorage
+     const existingUserInfo = localStorage.getItem("userInfo")
+     ? JSON.parse(localStorage.getItem("userInfo"))
+     : {};
 
-    // localStorage.setItem("userInfo", JSON.stringify(userInfo, data));
+   // Merge the existing data with the new data from getUserDetails
+   const updatedUserInfo = {
+     ...existingUserInfo,
+     ...data,  // This will override only the parts you receive from getUserDetails
+   };
+
+   // Save the merged object back to localStorage
+   localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
+   
+
   } catch (error) {
     dispatch({
       type: USER_DETAILS_FAIL,
@@ -174,7 +189,20 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
     dispatch({ type: USER_UPDATE_PROFILE_SUCCESS, payload: data });
     dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
 
-    localStorage.setItem("userInfo", JSON.stringify(data));
+    // Get the existing userInfo from localStorage
+    const existingUserInfo = localStorage.getItem("userInfo")
+      ? JSON.parse(localStorage.getItem("userInfo"))
+      : {};
+
+    // Merge the existing data with the new data from getUserDetails
+    const updatedUserInfo = {
+      ...existingUserInfo,
+      ...data,  // This will override only the parts you receive from getUserDetails
+    };
+
+    // Save the merged object back to localStorage
+    localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
+
   } catch (error) {
     dispatch({
       type: USER_UPDATE_PROFILE_FAIL,

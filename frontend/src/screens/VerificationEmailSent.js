@@ -28,7 +28,7 @@ function VerificationEmailSent() {
       <>
         
     </>}
-        <p>Didn't get it? <button className='btn-primary btn' onClick={sendVerificationEmailSubmit}>Click here</button> to receive a verification email</p>
+        <p>Need a new verification link ? <button className='btn-primary btn' onClick={sendVerificationEmailSubmit}>Click here</button> to receive a verification email</p>
     </div>
   )
 }
