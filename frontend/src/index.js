@@ -6,7 +6,9 @@ import store from "./store.js";
 // import "./bootstrap_minty.css";
 // import "./bootstrap_solar.css"; //
 // import "./bootstrap_litera.css";
-import "./bootstrap_sandstone.css";
+// import "./bootstrap_sketchy.css";
+import "./bootstrap_journal.css";
+// import "./bootstrap_sandstone.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 

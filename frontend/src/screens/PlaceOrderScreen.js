@@ -135,19 +135,19 @@ function PlaceOrderScreen() {
               <ListGroup.Item>
                 <Row>
                   <Col>Items:</Col>
-                  <Col>&eur;{cart.itemsPrice}</Col>
+                  <Col>{cart.itemsPrice}&euro;</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>Shipping:</Col>
-                  <Col>&eur;{cart.shippingPrice}</Col>
+                  <Col>{cart.shippingPrice}&euro;</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>Total:</Col>
-                  <Col>&eur;{cart.totalPrice}</Col>
+                  <Col>{cart.totalPrice}&euro;</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>

@@ -37,6 +37,10 @@ class User(AbstractUser):
         self.confirmation_code = ConfirmationCode.objects.create(code=getrandbits(128), expiresAt=(timezone.now() + datetime.timedelta(minutes=15)))
         self.save()
     
+    def generate_magic_link(self):
+        self.magic_link = MagicLink.objects.create(code=getrandbits(128), expiresAt=(timezone.now() + datetime.timedelta(minutes=15)))
+        self.save()
+    
 class Product(models.Model):
     _id = models.AutoField(primary_key=True, editable=False)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)

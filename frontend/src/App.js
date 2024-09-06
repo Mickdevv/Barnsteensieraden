@@ -20,6 +20,9 @@ import ProductEditScreen from "./screens/ProductEditScreen";
 import ProductListScreen from "./screens/ProductListScreen";
 import OrderListScreen from "./screens/OrderListScreen";
 import VerificationEmailSent from "./screens/VerificationEmailSent";
+import MagicLinkFormScreen from "./screens/MagicLinkFormScreen";
+import MagicLinkSentScreen from "./screens/MagicLinkSentScreen";
+import MagicLinkVerificationScreen from "./screens/MagicLinkVerificationScreen";
 
 function App() {
   return (
@@ -46,6 +49,9 @@ function App() {
             <Route path="/product/:id" element={<ProductScreen />} />
             <Route path="/admin/products" element={<ProductListScreen />} exact/>
             <Route path="/cart/:id?" element={<CartScreen />} />
+            <Route path="/forgot-password" element={<MagicLinkFormScreen />} />
+            <Route path="/forgot-password/sent" element={<MagicLinkSentScreen />} />
+            <Route path="/forgot-password/verify/:code/:id" element={<MagicLinkVerificationScreen />} />
           </Routes>
         </Container>
       </main>

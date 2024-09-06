@@ -9,8 +9,8 @@ from django.shortcuts import render
 def email_verification_email(user):
     x=0
     print(user.emailVerified)
-    if True:
-    # if user.emailVerified == False:
+    # if True:
+    if user.emailVerified == False:
         link = f"{settings.BASE_URL}profile/{user.confirmation_code.code}/"
         mailList = [user.email, 'michael@devereux.fm']
         print(link)    
@@ -36,6 +36,36 @@ def email_verification_email(user):
         except Exception as e:
             # Log the error
             logging.error("An error occurred while sending bid verification email", exc_info=True)
+            
+            
+def magic_link(user):
+    print(settings.BASE_URL)
+    
+    link = f"{settings.BASE_URL}forgot-password/verify/{user.magic_link.code}/{user.id}"
+    mailList = [user.email, 'michael@devereux.fm']
+    print(link)    
+    subject = 'Forgotten password'
+    from_email = settings.EMAIL_HOST_USER
+    
+    print(f'{settings.BASE_URL}, {settings.EMAIL_HOST_USER}, {settings.EMAIL_HOST_PASSWORD}')
+    
+    # Dynamic data
+    context = {'user':user, 'magic_link':link}
+    try:
+        # Render the HTML template with context
+        html_content = render_to_string('emails/user_magic_link_email.html', context)
+        text_content = strip_tags(html_content)  # Fallback plain text message
+
+        # Create the email
+        email = EmailMultiAlternatives(subject, text_content, from_email, mailList)
+        email.attach_alternative(html_content, "text/html")
+        
+        # Send the email
+        email.send()
+        logging.info("Magic link email sent successfully.")
+    except Exception as e:
+        # Log the error
+        logging.error("An error occurred while sending magic link email", exc_info=True)
         
     
 def admin_registration_notification(user):
@@ -62,7 +92,7 @@ def admin_registration_notification(user):
     except Exception as e:
         # Log the error
         logging.error("An error occurred while sending the user signup notification email", exc_info=True)
-
+        
     
 def order_notification(bid):
     if bid.approved == True:

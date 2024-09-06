@@ -3,6 +3,9 @@ import {
   USER_LOGIN_FAIL,
   USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
+  USER_MAGIC_LINK_FAIL,
+  USER_MAGIC_LINK_REQUEST,
+  USER_MAGIC_LINK_SUCCESS,
   USER_REGISTER_FAIL,
   USER_REGISTER_REQUEST,
   USER_REGISTER_SUCCESS,
@@ -46,11 +49,82 @@ export const login = (email, password) => async (dispatch) => {
       },
     };
 
+ 
+
     const { data } = await axios.post(
       "/api/users/login/",
       {
         username: email,
         password: password,
+      },
+      config
+    );
+
+
+    dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
+
+    localStorage.setItem("userInfo", JSON.stringify(data));
+  } catch (error) {
+    dispatch({
+      type: USER_LOGIN_FAIL,
+      payload:
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message,
+    });
+  }
+};
+
+export const requestMagicLink = (email) => async (dispatch) => {
+  try {
+    dispatch({type: USER_MAGIC_LINK_REQUEST})
+
+    new Promise(resolve => setTimeout(resolve, 3000));
+
+    const config = {
+      headers: {
+        "Content-type": " application/json",
+      },
+    };
+
+    // await new Promise(resolve => setTimeout(resolve, 3000));
+
+    await axios.post(
+      "/api/users/magic-link/get/",
+      {email:email},
+      config
+    );
+
+    dispatch({ type: USER_MAGIC_LINK_SUCCESS });
+
+  } catch (error) {
+    dispatch({
+      type: USER_MAGIC_LINK_FAIL,
+      payload:
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message,
+    });
+  }
+};
+
+export const loginMagicLink = (userId, code) => async (dispatch) => {
+  try {
+    dispatch({
+      type: USER_LOGIN_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        "Content-type": " application/json",
+      },
+    };
+
+    const { data } = await axios.post(
+      "/api/users/magic-link/verify/",
+      {
+        id: userId,
+        code: code,
       },
       config
     );

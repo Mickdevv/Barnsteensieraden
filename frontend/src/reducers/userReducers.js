@@ -2,6 +2,12 @@ import {
   USER_LOGIN_FAIL,
   USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
+  USER_MAGIC_LINK_FAIL,
+  USER_MAGIC_LINK_REQUEST,
+  USER_MAGIC_LINK_SUCCESS,
+  USER_MAGIC_LINK_VERIFY_FAIL,
+  USER_MAGIC_LINK_VERIFY_REQUEST,
+  USER_MAGIC_LINK_VERIFY_SUCCESS,
   USER_REGISTER_FAIL,
   USER_REGISTER_REQUEST,
   USER_REGISTER_SUCCESS,
@@ -43,6 +49,34 @@ export const userLoginReducer = (state = {}, action) => {
       return { loading: false, error: action.payload };
     case USER_LOGOUT:
       return {};
+
+    default:
+      return state;
+  }
+};
+
+export const userRequestMagicLinkReducer = (state = {}, action) => {
+  switch (action.type) {
+    case USER_MAGIC_LINK_REQUEST:
+      return { loading: true };
+    case USER_MAGIC_LINK_SUCCESS:
+      return { loading: false, success: true };
+    case USER_MAGIC_LINK_FAIL:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+export const userVerifyMagicLinkReducer = (state = {}, action) => {
+  switch (action.type) {
+    case USER_MAGIC_LINK_VERIFY_REQUEST:
+      return { loading: true };
+    case USER_MAGIC_LINK_VERIFY_SUCCESS:
+      return { loading: false, success: true };
+    case USER_MAGIC_LINK_VERIFY_FAIL:
+      return { loading: false, error: action.payload };
 
     default:
       return state;

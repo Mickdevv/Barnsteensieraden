@@ -5,5 +5,6 @@
   "eslint.format.enable": true,
   "json.format.keepLines": true,
   "notebook.defaultFormatter": "dbaeumer.vscode-eslint",
-  "notebook.formatOnSave.enabled": true
+  "notebook.formatOnSave.enabled": true,
+  "djlint.showInstallError": false
 }

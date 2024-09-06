@@ -56,6 +56,14 @@ function LoginScreen() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}></Form.Control>
         </Form.Group>
+        <Row className="py-1">
+        <Col>
+          Forgotten your password ? Get a magic link{" "}
+          <Link to="/forgot-password">
+            here
+          </Link>
+        </Col>
+      </Row>
         <Button type="submit" variant="primary" className="my-3">
           Sign in
         </Button>

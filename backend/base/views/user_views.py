@@ -2,7 +2,7 @@ import datetime
 from typing import Any
 from django.http import JsonResponse
 
-from base.send_email import admin_registration_notification, email_verification_email
+from base.send_email import admin_registration_notification, email_verification_email, magic_link
 from base.serializers import *
 from base.models import ConfirmationCode, Product, User
 from rest_framework.decorators import api_view, permission_classes
@@ -71,15 +71,16 @@ def registerUser(request):
         message={'detail':'User with this email already exists'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
     
-@api_view(['GET'])
-def magicLink(request, id, URL_code):  
+@api_view(['POST'])
+def magicLink(request):  
     data = request.data
+    
     try:
-        user = User.objects.get(id=id)
+        user = User.objects.get(id=data['id'])
         account_conditions = [
                 user.magic_link.code,
-                URL_code,
-                str(user.magic_link.code) == str(URL_code),
+                data['code'],
+                str(user.magic_link.code) == str(data['code']),
                 datetime.datetime.now().timestamp() <= user.magic_link.expiresAt.timestamp()
             ]
         
@@ -91,15 +92,26 @@ def magicLink(request, id, URL_code):
         message={'detail':'User with this email already exists'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
     
-@api_view(['GET'])
+@api_view(['POST'])
 def sendMagicLink(request):  
     data = request.data
     try:
-        user = User.objects.get(email=data["email"])
+        email = data.get("email")
         
+        if not email:
+            return Response({'detail': 'Email field is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Filter user by email (assuming email is the correct field)
+        user = User.objects.get(email=email)
+        print(user.id)
+        user.generate_magic_link()
+        magic_link(user)
+        
+        message = {'detail': 'If a user with that username exists, an email will be sent containing a link that logs you in.'}
+        return Response(message, status=status.HTTP_200_OK)
         
     except:
-        message={'detail':'User with this email already exists'}
+        message={'detail':'An error occurred when processing your request. Please try again or contact our team at team@b.nl'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])

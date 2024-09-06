@@ -19,7 +19,7 @@ function Header() {
 
   return (
     <header>
-      <Navbar expand="lg" className="bg-primary" data-bs-theme="dark">
+      <Navbar expand="lg" className="bg-dark" data-bs-theme="dark">
         <Container>
 
           <LinkContainer to="/">
@@ -29,12 +29,37 @@ function Header() {
           <Navbar.Collapse id="basic-navbar-nav">
             
             <Nav className="ml-auto">
-              <LinkContainer to="/cart">
-                <Nav.Link>
-                  <i className="fas fa-shopping-cart" /> Cart
-                </Nav.Link>
-              </LinkContainer>
+              <div className="search-container">
+                <SearchBox />
+              </div>
 
+              {userInfo && userInfo.isAdmin && (
+                <NavDropdown title="Admin" id="adminmenu">
+                  <LinkContainer to="/admin/users">
+                    <NavDropdown.Item>Manage users</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to="/admin/products">
+                    <NavDropdown.Item>Manage products</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to="/admin/orders">
+                    <NavDropdown.Item>Manage orders</NavDropdown.Item>
+                  </LinkContainer>
+                </NavDropdown>
+              )}
+
+              {/* <NavDropdown title="Products" id="productmenu">
+                <LinkContainer to="/admin/users">
+                  <NavDropdown.Item>Manage users</NavDropdown.Item>
+                </LinkContainer>
+                <LinkContainer to="/admin/products">
+                  <NavDropdown.Item>Manage products</NavDropdown.Item>
+                </LinkContainer>
+                <LinkContainer to="/admin/orders">
+                  <NavDropdown.Item>Manage orders</NavDropdown.Item>
+                </LinkContainer>
+              </NavDropdown> */}
+
+              
               {userInfo ? (
                 <NavDropdown title={userInfo.name} id="username">
                   <LinkContainer to="/profile">
@@ -52,20 +77,12 @@ function Header() {
                 </LinkContainer>
               )}
 
-              {userInfo && userInfo.isAdmin && (
-                <NavDropdown title="Admin" id="adminmenu">
-                  <LinkContainer to="/admin/users">
-                    <NavDropdown.Item>Manage users</NavDropdown.Item>
-                  </LinkContainer>
-                  <LinkContainer to="/admin/products">
-                    <NavDropdown.Item>Manage products</NavDropdown.Item>
-                  </LinkContainer>
-                  <LinkContainer to="/admin/orders">
-                    <NavDropdown.Item>Manage orders</NavDropdown.Item>
-                  </LinkContainer>
-                </NavDropdown>
-              )}
-              <SearchBox />
+
+              <LinkContainer to="/cart">
+                <Nav.Link>
+                  <i className="fas fa-shopping-cart" /> Cart
+                </Nav.Link>
+              </LinkContainer>
             </Nav>
           </Navbar.Collapse>
         </Container>
