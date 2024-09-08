@@ -34,12 +34,11 @@ function ProductEditScreen() {
     const { error: errorUpdate, loading: loadingUpdate, success: successUpdate } = productUpdate
 
     useEffect(() => {
-
         if(successUpdate) {
             dispatch({type: PRODUCT_UPDATE_RESET})
             navigate(`/admin/products`)
         } else {
-            if (!product || !product.name || product._id !== Number(productId)) {
+            if (!product || product._id !== Number(productId)) {
                 dispatch(listProductDetails(productId))
             } else {
                 setName(product.name)

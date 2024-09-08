@@ -69,7 +69,7 @@ def magic_link(user):
         
     
 def admin_registration_notification(user):
-    link = f"{settings.BASE_URL}admin/users/{user.id}/"
+    link = f"{settings.BASE_URL}admin/user/{user.id}/edit"
     mailList = ["michael@devereux.fm", settings.EMAIL_HOST_USER]
         
     subject = f'Notification: {user.first_name} {user.last_name} has just signed up'
