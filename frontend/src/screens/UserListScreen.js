@@ -48,6 +48,8 @@ function UserListScreen() {
             <th>ID</th>
             <th>Name</th>
             <th>Email</th>
+            <th>Verified</th>
+            <th>Active</th>
             <th>Admin</th>
             <th></th>
           </thead>
@@ -57,6 +59,20 @@ function UserListScreen() {
                 <td>{user._id}</td>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
+                <td>
+                  {user.emailVerified ? (
+                    <i className="fas fa-check" style={{ color: "green" }}></i>
+                  ) : (
+                    <i className="fas fa-times" style={{ color: "red" }}></i>
+                  )}
+                </td>
+                <td>
+                  {user.is_active ? (
+                    <i className="fas fa-check" style={{ color: "green" }}></i>
+                  ) : (
+                    <i className="fas fa-times" style={{ color: "red" }}></i>
+                  )}
+                </td>
                 <td>
                   {user.isAdmin ? (
                     <i className="fas fa-check" style={{ color: "green" }}></i>

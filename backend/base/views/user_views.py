@@ -219,8 +219,8 @@ def verify_email_send(request):
     if request.method == 'POST':
         try:
             user = request.user
-            print(user.confirmation_code.code)
             user.generate_confirmation_code()
+            print(user.confirmation_code.code)
             user.save()
             print(user.confirmation_code.code)
             email_verification_email(user)

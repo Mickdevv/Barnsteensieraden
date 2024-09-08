@@ -202,7 +202,7 @@ MEDIA_URL = '/images/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-STRIPE_SECRET_KEY = 'sk_test_51PqL1Z02rHjAqjmEzTBPDJFtpwBBFQtWYOww9WXsMlL2YVmUYMOZofCyjik3TI5vVlDHbqI6EaYdHZygIaCoXadv00UWqrqTwX'
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 
 # email settings
 EMAIL_HOST = os.getenv('EMAIL_HOST')
