@@ -10,7 +10,7 @@ function ProductWindow({ product }) {
       <Link to={`/product/${product._id}`}>
         <Card.Img src={product.image} />
         <Card.Body>
-          <p>{product.price}</p>
+          <p>&euro;{product.price}</p>
           <p>{product.name}</p>
         </Card.Body>
       </Link>
