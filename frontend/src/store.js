@@ -8,6 +8,7 @@ import {
   productCreateReducer,
   productUpdateReducer,
   productCreateReviewReducer,
+  productFilterReducer,
 } from "./reducers/productReducers";
 import { cartReducer } from "./reducers/cartReducers";
 import {
@@ -58,6 +59,7 @@ const reducer = combineReducers({
   userVerify: userVerifyReducer,
   userRequestMagicLink: userRequestMagicLinkReducer,
   userVerifyMagicLink: userVerifyMagicLinkReducer,
+  productFilter: productFilterReducer
 });
 
 const cartItemsFromStorage = localStorage.getItem("cartItems")

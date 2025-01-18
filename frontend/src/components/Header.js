@@ -20,7 +20,7 @@ function Header() {
   return (
     <header>
       <Navbar expand="lg" className="bg-dark" data-bs-theme="dark">
-        <Container>
+        <Container className="d-flex justify-content-between">
 
           <LinkContainer to="/">
             <Navbar.Brand>Barnsteensieraden</Navbar.Brand>
@@ -28,10 +28,8 @@ function Header() {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             
-            <Nav className="ml-auto">
-              <div className="search-container">
-                <SearchBox />
-              </div>
+            <Nav className="ml-auto d-flex justify-content-between">
+              
 
               {userInfo && userInfo.isAdmin && (
                 <NavDropdown title="Admin" id="adminmenu">
@@ -46,18 +44,6 @@ function Header() {
                   </LinkContainer>
                 </NavDropdown>
               )}
-
-              {/* <NavDropdown title="Products" id="productmenu">
-                <LinkContainer to="/admin/users">
-                  <NavDropdown.Item>Manage users</NavDropdown.Item>
-                </LinkContainer>
-                <LinkContainer to="/admin/products">
-                  <NavDropdown.Item>Manage products</NavDropdown.Item>
-                </LinkContainer>
-                <LinkContainer to="/admin/orders">
-                  <NavDropdown.Item>Manage orders</NavDropdown.Item>
-                </LinkContainer>
-              </NavDropdown> */}
 
               
               {userInfo ? (
@@ -76,13 +62,15 @@ function Header() {
                   </Nav.Link>
                 </LinkContainer>
               )}
-
-
               <LinkContainer to="/cart">
                 <Nav.Link>
                   <i className="fas fa-shopping-cart" /> Cart
                 </Nav.Link>
               </LinkContainer>
+              
+              <div className="search-container">
+                <SearchBox />
+              </div>
             </Nav>
           </Navbar.Collapse>
         </Container>

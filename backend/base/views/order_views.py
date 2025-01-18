@@ -33,10 +33,10 @@ def verify_payment(request):
     
     try:
         payment_intent = stripe.PaymentIntent.retrieve(payment_intent_id)
-        # print(str(payment_intent))
+        print(str(payment_intent))
         order = Order.objects.get(_id=order_id)
         # print(str(payment_intent))
-        # print(payment_intent.amount_received, str(int(order.totalPrice*100)))
+        print(payment_intent.amount_received, str(int(order.totalPrice*100)))
         if payment_intent.client_secret == client_secret and payment_intent.status == 'succeeded' and str(payment_intent.amount_received) == str(int(order.totalPrice*100)):
             # Handle successful payment here (e.g., update order status)
             if not order.isPaid:

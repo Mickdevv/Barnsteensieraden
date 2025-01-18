@@ -20,6 +20,8 @@ import {
   PRODUCT_CREATE_REVIEW_REQUEST,
   PRODUCT_CREATE_REVIEW_SUCCESS,
   PRODUCT_CREATE_REVIEW_RESET,
+  PRODUCT_SET_FILTER,
+  PRODUCT_RESET_FILTER,
 } from "../constants/productConstants";
 
 export const productListReducer = (state = { products: [] }, action) => {
@@ -127,3 +129,16 @@ export const productCreateReviewReducer = (
       return state;
   }
 };
+
+export const productFilterReducer = (
+  state = {category: ""}, action
+) => {
+  switch (action.type) {
+    case PRODUCT_SET_FILTER:
+      return {category: action.payload}
+    case PRODUCT_RESET_FILTER:
+      return {category: ""}
+    default:
+      return {category: ""}
+  }
+}

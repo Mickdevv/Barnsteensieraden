@@ -9,6 +9,10 @@ function ProductWindow({ product }) {
     <Card className='my-2 rounded'>
       <Link to={`/product/${product._id}`}>
         <Card.Img src={product.image} />
+        <Card.Body>
+          <p>{product.price}</p>
+          <p>{product.name}</p>
+        </Card.Body>
       </Link>
 
     </Card>

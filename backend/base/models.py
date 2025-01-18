@@ -5,12 +5,10 @@ from random import getrandbits
 from django.db import models
 from django.db.models import Sum
 
+def generate_code():
+    return str(getrandbits(128))
 # Create your models here.
 class ConfirmationCode(models.Model):
-    @staticmethod
-    def generate_code():
-        return str(getrandbits(128))
-        
     def __str__(self) -> str:
         return str(self.expiresAt)
     
@@ -18,10 +16,6 @@ class ConfirmationCode(models.Model):
     code = models.CharField(max_length=200, default=generate_code)
     
 class MagicLink(models.Model):
-    @staticmethod
-    def generate_code():
-        return str(getrandbits(128))
-        
     def __str__(self) -> str:
         return str(self.expiresAt)
     
@@ -56,7 +50,10 @@ class Product(models.Model):
     createdAt = models.DateTimeField(auto_now_add=True)
     
     def __str__(self) -> str:
-        return self.name
+        if self.name:
+            return self.name
+        else:
+            return "No name for product"
     
 class Review(models.Model):
     _id = models.AutoField(primary_key=True, editable=False)

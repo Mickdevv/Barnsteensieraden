@@ -19,6 +19,8 @@ import {
   PRODUCT_CREATE_REVIEW_REQUEST,
   PRODUCT_CREATE_REVIEW_SUCCESS,
   PRODUCT_CREATE_REVIEW_RESET,
+  PRODUCT_SET_FILTER,
+  PRODUCT_RESET_FILTER,
 } from "../constants/productConstants";
 
 export const listProducts = (keyword) => async (dispatch) => {
@@ -181,3 +183,15 @@ export const createProductReview = (productId, review) => async (dispatch, getSt
     });
   }
 };
+
+export const setProductFilter = (filter) => async (dispatch, getState) => {
+  try {
+    dispatch({type: PRODUCT_SET_FILTER, payload: filter})
+  } catch (error) {
+    dispatch({type: PRODUCT_RESET_FILTER})
+  }
+}
+
+export const resetProductFilter = (filter) => async (dispatch) => {
+  dispatch({type: PRODUCT_RESET_FILTER})
+}

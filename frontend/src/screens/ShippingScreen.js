@@ -61,6 +61,7 @@ function ShippingScreen() {
 
   const submitHandler = (e) => {
     e.preventDefault();
+    console.warn({ address, name, city, postcode, country })
     dispatch(saveShippingAddress({ address, name, city, postcode, country }));
     navigate("/placeorder");
   };

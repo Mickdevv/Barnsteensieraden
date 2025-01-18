@@ -16,12 +16,12 @@ function Product({ product }) {
             <strong>{product.name}</strong>
         </Card.Title>
       </Link>
-      {/* <Card.Text as='div'>
+      <Card.Text as='div'>
         <div className='my-3 py-3'>
             <Rating value={product.rating} text={` ${product.numReviews} reviews`} color={'#f8e825'}/>
         </div>
-      </Card.Text> */}
-      {/* <Card.Text as='p'>&euro;{product.price}</Card.Text> */}
+      </Card.Text>
+      <Card.Text as='p'>&euro;{product.price}</Card.Text>
       </Card.Body>
     </Card>
   )

@@ -1,9 +1,9 @@
 main {
   min-height: 80vh;
-  background-color: rgb(207, 243, 255);
+  /* background-color: rgb(207, 243, 255); */
 }
 body, .card {
-  background-color: rgb(207, 243, 255);
+  /* background-color: rgb(207, 243, 255); */
 
 }
   
