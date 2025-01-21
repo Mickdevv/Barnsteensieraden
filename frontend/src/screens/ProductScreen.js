@@ -159,7 +159,12 @@ function ProductScreen() {
                   <p>{review.comment}</p>
                   </ListGroup.Item>))}
                   
-                  <ListGroup.Item>
+                  
+                </ListGroup>
+
+                 : <Message variant='info'>No reviews for this product yet</Message>
+                 }
+                 <ListGroup><ListGroup.Item>
                     <h4>Write a review</h4>
                     {loadingReview && <Loader />}
                     {successReview && <Message variant='success'>Review submitted</Message>}
@@ -188,11 +193,7 @@ function ProductScreen() {
                     <Message variant='info'><Link to='/login'>Log in</Link> to write a review</Message>
                   )}
                     
-                  </ListGroup.Item>
-                </ListGroup>
-
-                 : <Message variant='info'>No reviews for this product yet</Message>
-                 }
+                  </ListGroup.Item></ListGroup>
           </Col>
         </Row>
         </div>
