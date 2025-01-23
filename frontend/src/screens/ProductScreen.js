@@ -155,7 +155,7 @@ function ProductScreen() {
                     <ListGroup.Item key={review._id}>
                   <strong>{review.name}</strong>
                   <Rating value={review.rating} color='#f8e825'></Rating>
-                  <p>{review.createdAt.substring(0,10)}</p>
+                  <p>{review.createdAt.substring(8,10)}/{review.createdAt.substring(5,7)}/{review.createdAt.substring(0,4)}</p>
                   <p>{review.comment}</p>
                   </ListGroup.Item>))}
                   
