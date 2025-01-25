@@ -8,7 +8,7 @@ export $(grep -v '^#' $ENV_FILE | xargs)
 PROJECT_DIR=$(pwd)
 SERVER_IP=$(curl -s http://checkip.amazonaws.com)  # Automatically fetch the server's public IPDOMAIN_NAME="${1:-}"  # Optional domain name passed as an argument
 VENV_DIR="$PROJECT_DIR/../env"
-GUNICORN_SERVICE="/etc/systemd/system/gunicorn.service"
+GUNICORN_SERVICE="/etc/systemd/system/$PROJECT_NAME.service"
 NGINX_CONFIG="/etc/nginx/sites-available/$PROJECT_NAME"
 NGINX_ENABLED="/etc/nginx/sites-enabled/$PROJECT_NAME"
 
@@ -153,6 +153,8 @@ sudo systemctl restart ssh
 
 # Restart Nginx
 sudo systemctl daemon-reload
+sudo systemctl start barnsteensieraden
+sudo systemctl enable barnsteensieraden
 sudo systemctl start gunicorn
 sudo systemctl enable gunicorn
 sudo systemctl restart nginx
