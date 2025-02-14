@@ -27,7 +27,7 @@ urlpatterns = [
     path('api/products/', include('base.urls.product_urls')),
     path('api/users/', include('base.urls.user_urls')),
     path('api/orders/', include('base.urls.order_urls')),
-    re_path(r'^(?!api|admin).*$', views.react_app, name='react_app'),
+    re_path(r'^(?!api|admin|static).*$', views.react_app, name='react_app'),
     path('', views.react_app),  # This serves the root index.html
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

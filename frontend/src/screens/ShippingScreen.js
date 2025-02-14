@@ -20,7 +20,7 @@ function ShippingScreen() {
   const [address, setAddress] = useState(shippingAddress.address);
   const [city, setCity] = useState(shippingAddress.city);
   const [postcode, setPostcode] = useState(shippingAddress.postcode);
-  const [country, setCountry] = useState(shippingAddress.country);
+  const [country, setCountry] = useState(shippingAddress.country || "");
   const [name, setName] = useState(shippingAddress.name);
 
   const euSingleMarketCountries = [
